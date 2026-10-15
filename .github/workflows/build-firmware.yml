@@ -20,6 +20,8 @@ jobs:
       artifact_name: ${{ steps.artifact_name.outputs.name }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
 
       - name: Restore ccache
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
@@ -64,9 +66,14 @@ jobs:
           name: ${{ needs.build.outputs.artifact_name }}
           path: release
 
+      - name: Rename release asset
+        run: |
+          mv release/FoloToy-AI-Passport-full.bin \
+             "release/Qoder-Passport-${GITHUB_REF_NAME}-esp32c3-full.bin"
+
       - name: Create release (tag push)
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         with:
           name: "${{ github.ref_name }}"
-          files: release/FoloToy-AI-Passport-full.bin
+          files: release/Qoder-Passport-${{ github.ref_name }}-esp32c3-full.bin
           fail_on_unmatched_files: true
