@@ -34,11 +34,23 @@ Store reusable source images and generated display assets in `images/`.
 | [`images/readme-hardware-specs.png`](images/readme-hardware-specs.png) | 2172 × 724, PNG RGBA | Optional technical infographic retained as a reference asset; it is no longer used as the homepage hero. Generated for this repository with the built-in image generation tool on 2026-09-17; the six labels and values were checked against the documented hardware contract. |
 | [`images/logo-wordmark.png`](images/logo-wordmark.png) | 1648 × 336, PNG RGBA | Transparent black wordmark extracted from the repository's original `images/logo.png`; embedded in both project README files for light backgrounds. |
 | [`images/logo-wordmark-dark.png`](images/logo-wordmark-dark.png) | 1648 × 336, PNG RGBA | White version of the extracted wordmark, used by the README `<picture>` element when GitHub is in dark mode. |
+| [`images/readme-screen-provisioning.png`](images/readme-screen-provisioning.png) | 1152 × 1536, PNG RGB | First-run capture: the device's own WPA2 configuration hotspot with QR code and portal URL. |
+| [`images/readme-screen-agent-templates.png`](images/readme-screen-agent-templates.png) | 1152 × 1536, PNG RGB | First-run capture: step 1, the Agent template list fetched from QCA. |
+| [`images/readme-screen-identities.png`](images/readme-screen-identities.png) | 1152 × 1536, PNG RGB | First-run capture: step 2, the user identity list fetched from QCA. |
+| [`images/readme-screen-voice-chat.png`](images/readme-screen-voice-chat.png) | 1152 × 1536, PNG RGB | First-run capture: a live full-duplex voice session with the assistant reply line. |
 
 - Use descriptive names and document dimensions, pixel format, conversion steps, and destination.
 - Prefer formats suitable for the 240 × 320 RGB565 display and account for Flash and internal RAM.
 - Preserve editable sources where licensing permits, and record the source and license.
 - Never commit device QR secrets, credentials, or personal data in images.
+
+Source of the four `readme-screen-*.png` captures: supplied by the project owner on
+2026-10-15 for the interface gallery embedded in both project README files; committed
+byte-identical to the supplied files. They carry a TC260 AIGC implicit label in their
+XMP metadata (AI-synthesized imagery), retained as supplied. The provisioning capture
+shows the hotspot SSID, temporary password, and QR code that the device regenerates for
+every provisioning session; publishing that capture was explicitly approved by the
+project owner as a one-off exception to the bullet above.
 
 ## Music and sound effects
 

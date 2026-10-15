@@ -26,6 +26,19 @@ Wi-Fi 凭据与 QCA 个人访问令牌（PAT）都在设备自建的 `192.168.4.
 
 ---
 
+## 界面一览
+
+四张 v0.1.0 界面截图，按首次使用顺序排列：配网热点、两个选择步骤与一次实时语音
+会话。第一张图中的热点名称与密码由设备在每次配网时临时生成。
+
+| 1 —— 配网热点 | 2 —— 第 1 步：选择 Agent 模板 |
+| :---: | :---: |
+| <img src="assets/images/readme-screen-provisioning.png" alt="配网界面：设备热点名称、临时密码、二维码与门户地址 192.168.4.1" width="100%"> | <img src="assets/images/readme-screen-agent-templates.png" alt="第 1 步界面：列出从 QCA 拉取的 Agent 模板，如 Personal Agent" width="100%"> |
+
+| 3 —— 第 2 步：选择用户身份 | 4 —— 实时语音会话 |
+| :---: | :---: |
+| <img src="assets/images/readme-screen-identities.png" alt="第 2 步界面：列出从 QCA 拉取的用户身份" width="100%"> | <img src="assets/images/readme-screen-voice-chat.png" alt="语音会话界面：聆听中状态与助手回复行" width="100%"> |
+
 ## 功能
 
 1. 开机后回填已保存的 Wi-Fi 凭据，接入 2.4 GHz 网络。

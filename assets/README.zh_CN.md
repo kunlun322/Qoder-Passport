@@ -32,11 +32,20 @@
 | [`images/readme-hardware-specs.png`](images/readme-hardware-specs.png) | 2172 × 724，PNG RGBA | 保留为可选技术参考图，不再用于首页主视觉。于 2026-09-17 使用内置图像生成工具为本仓库生成；已根据文档中的硬件能力契约核对图中的六项标签与参数。 |
 | [`images/logo-wordmark.png`](images/logo-wordmark.png) | 1648 × 336，PNG RGBA | 从仓库原始 `images/logo.png` 中精确裁切并去除背景的黑色字标；用于中英文项目 README 的浅色主题。 |
 | [`images/logo-wordmark-dark.png`](images/logo-wordmark-dark.png) | 1648 × 336，PNG RGBA | 提取字标的白色版本；README 使用 `<picture>` 在 GitHub 深色主题下显示。 |
+| [`images/readme-screen-provisioning.png`](images/readme-screen-provisioning.png) | 1152 × 1536，PNG RGB | 首次使用截图：设备自建 WPA2 配网热点，含二维码与门户地址。 |
+| [`images/readme-screen-agent-templates.png`](images/readme-screen-agent-templates.png) | 1152 × 1536，PNG RGB | 首次使用截图：第 1 步，从 QCA 拉取的 Agent 模板列表。 |
+| [`images/readme-screen-identities.png`](images/readme-screen-identities.png) | 1152 × 1536，PNG RGB | 首次使用截图：第 2 步，从 QCA 拉取的用户身份列表。 |
+| [`images/readme-screen-voice-chat.png`](images/readme-screen-voice-chat.png) | 1152 × 1536，PNG RGB | 首次使用截图：一次实时全双工语音会话，含助手回复行。 |
 
 - 使用描述性命名，并记录尺寸、像素格式、转换步骤与目标路径。
 - 优先采用适合 240 × 320 RGB565 显示的格式，并纳入 Flash 与内部 RAM 考量。
 - 许可允许时保留可编辑源文件，并记录来源与许可。
 - 图片中不得包含设备二维码秘密、凭证或个人数据。
+
+四张 `readme-screen-*.png` 界面截图来源：项目负责人于 2026-10-15 提供，用于嵌入中英文
+项目 README 的界面一览；按提供时的字节原样提交。文件 XMP 中带有 TC260 AIGC 隐式标识
+（AI 生成合成图像），按原样保留。配网截图中的热点名称、临时密码与二维码由设备在每次
+配网时重新生成；经项目负责人明确同意，作为上一条规则的一次性例外发布。
 
 ## 音乐与音效（music）
 

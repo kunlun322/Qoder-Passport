@@ -31,6 +31,21 @@ firmware.
 
 ---
 
+## On-device screens
+
+Four captures of the shipped v0.1.0 interface in first-run order: the
+configuration hotspot, the two selection steps, and a live voice session.
+The hotspot name and password on the first screen are generated fresh by the
+device for every provisioning session.
+
+| 1 — Configuration hotspot | 2 — Step 1: pick an Agent template |
+| :---: | :---: |
+| <img src="assets/images/readme-screen-provisioning.png" alt="Provisioning screen showing the device hotspot name, its temporary password, a QR code, and the portal address 192.168.4.1" width="100%"> | <img src="assets/images/readme-screen-agent-templates.png" alt="Step 1 screen listing the Agent templates fetched from QCA, such as Personal Agent" width="100%"> |
+
+| 3 — Step 2: pick a user identity | 4 — Live voice session |
+| :---: | :---: |
+| <img src="assets/images/readme-screen-identities.png" alt="Step 2 screen listing the user identities fetched from QCA" width="100%"> | <img src="assets/images/readme-screen-voice-chat.png" alt="Voice session screen showing the listening state and the assistant reply line" width="100%"> |
+
 ## What it does
 
 1. Boots, restores saved Wi-Fi credentials, and joins your 2.4 GHz network.
