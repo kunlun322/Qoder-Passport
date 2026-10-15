@@ -39,10 +39,13 @@ static void qj_cb(void *user, qj_parser_t *p, qj_event_t ev, const char *data, s
             assert(c->emoji_len + len < sizeof(c->emoji));
             memcpy(c->emoji + c->emoji_len, data, len);
             c->emoji_len += len;
-        } else if (qj_key_is(p, "id")) {
-            if (qj_depth(p) == 3 && qj_in_array(p, 2) && strcmp(qj_key(p, 1), "data") == 0) {
-                c->id_depth_ok++;
-            }
+        }
+        break;
+    case QJ_EV_STR_END:
+        // A value may arrive as several chunks, so count values, not chunks.
+        if (qj_key_is(p, "id") && qj_depth(p) == 3 && qj_in_array(p, 2) &&
+            strcmp(qj_key(p, 1), "data") == 0) {
+            c->id_depth_ok++;
         }
         break;
     case QJ_EV_PRIM:
