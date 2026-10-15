@@ -1,0 +1,4 @@
+## IDF Component Manager manifest for the QCA companion app.
+dependencies:
+  # WebSocket client for the QCA realtime voice channel.
+  espressif/esp_websocket_client: "^1.5.0"

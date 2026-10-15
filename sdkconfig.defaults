@@ -1,0 +1,76 @@
+# --- 目标芯片 ---
+CONFIG_IDF_TARGET="esp32c3"
+# 注:ESP32-C3 无 PSRAM,故不设 CONFIG_SPIRAM。
+
+# --- Flash ---
+# FoloToy AI Passport 当前产品/固件基线使用 8MB Flash。
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+# 固定 8MB 镜像头，关闭 detect，便于 idf.py merge-bin。
+CONFIG_ESPTOOLPY_HEADER_FLASHSIZE_UPDATE=n
+# 默认模板只保留 NVS、PHY data 和占用剩余空间的 factory app；用户可按需修改。
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"
+
+# --- 控制台:USB-Serial-JTAG(C3 原生 USB,GPIO18/19)---
+# 不用 UART0:其默认 TX=GPIO21 与本板背光引脚冲突。
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+CONFIG_ESP_CONSOLE_SECONDARY_NONE=y
+
+# --- LVGL ---
+CONFIG_LV_COLOR_DEPTH_16=y
+# 20 ms display refresh period targets up to 50 FPS when rendering and SPI
+# transfer complete within the same budget.
+CONFIG_LV_DEF_REFR_PERIOD=20
+CONFIG_LV_FONT_MONTSERRAT_14=y
+CONFIG_LV_FONT_MONTSERRAT_20=y
+# LVGL 内置 malloc 池大小(KB)。它是独立静态区、不与系统堆共享,配大了会白白占用 RAM。
+# 注意:LVGL 9.3+ 只认 LV_MEM_SIZE(字节);旧的 LV_MEM_SIZE_KILOBYTES 会被默认 64KB 覆盖,
+# 实测曾因此让 BluFi 的 BLE 控制器 ESP_ERR_NO_MEM。Qoder Passport 页面对象不多,32KB 足够。
+CONFIG_LV_MEM_SIZE=32768
+CONFIG_LV_TXT_ENC_UTF8=y
+CONFIG_LV_USE_FONT_PLACEHOLDER=y
+
+# --- 系统 ---
+CONFIG_FREERTOS_HZ=1000
+
+# --- Qoder Passport：WPA2 热点配置网络与 PAT，不再使用 BLE/BluFi ---
+CONFIG_BT_ENABLED=n
+CONFIG_LV_USE_QRCODE=y
+CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024
+CONFIG_LWIP_DHCPS_ADD_DNS=y
+# 无 PSRAM 的 TLS 内存策略(实机日志驱动):
+# - IDF 动态缓冲按“每条记录”临时分配接收区。语音会话中堆被 Wi-Fi/lwIP 收包切碎，
+#   服务端满长 16KB 记录需约 16.7KB 连续块，实机多次 alloc(16749) -0x7F00 断线。
+# - 动态缓冲又与 max_fragment_length 不兼容：mbedTLS 握手消息重组按完整接收缓冲长度
+#   搬移分片，而动态缓冲只按当前记录分配，证书被分片后越界写堆，实机开机即崩溃。
+# 因此关闭动态缓冲，改为握手前一次性分配的固定缓冲：main/tls_mfl.c 通过 RFC 6066
+# 请求服务端把记录限制在 4KB(api.qoder.com 已确认回应)；接收缓冲 8KB 足以重组其
+# 约 5.6KB 的证书链握手消息，发送 4KB。会话期间不再有大块临时分配。
+# 证书校验与密码套件不变；握手完成后只保留对端证书摘要(省约 4KB 堆)，不影响校验。
+CONFIG_MBEDTLS_DYNAMIC_BUFFER=n
+CONFIG_MBEDTLS_SSL_MAX_FRAGMENT_LENGTH=y
+CONFIG_MBEDTLS_ASYMMETRIC_CONTENT_LEN=y
+CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN=8192
+CONFIG_MBEDTLS_SSL_OUT_CONTENT_LEN=4096
+CONFIG_MBEDTLS_SSL_KEEP_PEER_CERTIFICATE=n
+# 下行 24kHz PCM(base64) + 双向 TLS 同时占用堆：16KB TCP 积压窗口会挤掉
+# TLS 记录的连续内存，实机曾出现 -0x7F00。8KB 窗口配合流式背压限制积压，
+# 与上面的 4KB 记录上限配合，不改证书校验。
+CONFIG_LWIP_TCP_WND_DEFAULT=8192
+CONFIG_LWIP_TCP_SND_BUF_DEFAULT=11520
+CONFIG_LWIP_TCP_RECVMBOX_SIZE=16
+# ESP32-C3 的 IRAM 与 DRAM 共用同一块 SRAM:关闭 Wi-Fi 的 IRAM 优化可把约 25KB 代码挪回 Flash、
+# 还给堆。实时语音码率约 64KB/s,远低于不开优化时的吞吐上限。静态 RX 缓冲 10→8 再省 3KB。
+CONFIG_ESP_WIFI_IRAM_OPT=n
+CONFIG_ESP_WIFI_RX_IRAM_OPT=n
+CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM=8
+# 收发包缓冲上限(实机日志驱动)：默认动态 RX/TX 各 32 个、tcpip 邮箱 32，插话瞬间旧回答下行全速
+# 冲刷 + 上行回补 200 ms 语音同时发生，Wi-Fi/lwIP 一度占掉约 25KB，最低剩余堆只剩 772 字节。
+# 改 RX 12 后(boot17)仍有 63 次约 1.5KB 收包分配失败：12 个满长帧≈20KB，几乎等于会话中
+# 的全部剩余堆，连 TCP ACK 都可能分配不到而触发重传卡顿。8KB TCP 窗口最多约 6 个满长报文
+# 在途，加乱序缓存 4 个，RX 10 个(Kconfig 要求≥静态 8)足够，并给 ACK 等留出余量；参考小智
+# C3 配置收紧 tcpip 邮箱到 16。超出上限的包由 TCP 重传，不会破坏数据或 TLS。
+CONFIG_ESP_WIFI_DYNAMIC_RX_BUFFER_NUM=10
+CONFIG_ESP_WIFI_DYNAMIC_TX_BUFFER_NUM=16
+CONFIG_LWIP_TCPIP_RECVMBOX_SIZE=16

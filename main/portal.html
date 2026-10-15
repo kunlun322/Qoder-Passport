@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qoder Passport · 设备配置</title>
+<style>
+:root{color-scheme:dark;font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;background:#0b1020;color:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;padding:30px 18px 48px}main{max-width:520px;margin:auto}.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px}.mark{width:12px;height:12px;background:#2dd4bf;border-radius:3px}h1{font-size:28px;line-height:1.3;margin:25px 0 10px}p{margin:8px 0;color:#94a3b8}.card{padding:22px;background:#161d33;border:1px solid #263047;border-radius:16px;margin-top:20px}h2{font-size:17px;margin:0 0 14px;color:#2dd4bf}label{display:block;margin:16px 0 6px;font-weight:600}input,select,button{font:inherit;width:100%;padding:12px;border-radius:10px;border:1px solid #354159;background:#0b1020;color:#e2e8f0}input:focus,select:focus,button:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}input[type=checkbox]{width:auto;margin-right:8px;accent-color:#2dd4bf}.check{font-size:13px;font-weight:400;margin:8px 0}.row{display:flex;gap:8px;align-items:center}.row input{min-width:0}.row button{width:auto;white-space:nowrap;font-size:13px}button{cursor:pointer}button:disabled{opacity:.5;cursor:wait}.primary{background:#2dd4bf;color:#082624;font-weight:700;border:0;margin-top:20px}.small{font-size:12px;color:#94a3b8}.note{border-left:3px solid #f59e0b;padding-left:12px;margin:16px 0;color:#cbd5e1;font-size:13px}a{color:#38bdf8;text-underline-offset:3px}.status{border:1px solid #354159;border-radius:12px;padding:13px 16px;margin-top:20px;color:#cbd5e1}.status[data-tone=error]{border-color:#f87171;color:#fca5a5}.status[data-tone=ok]{border-color:#2dd4bf;color:#5eead4}footer{font-size:12px;color:#64748b;text-align:center;margin-top:24px}[hidden]{display:none!important}
+</style>
+</head>
+<body><main>
+<div class="brand"><span class="mark"></span>Qoder Passport</div>
+<h1>让助手连接你的世界</h1>
+<p>在这里配置 Wi-Fi 与 Qoder Cloud Agents 的个人访问令牌。设置只保存在设备上。</p>
+<div class="note">这个热点用于配置，不提供互联网。请先获取 PAT，再连接设备热点；如果链接打不开，切换手机移动数据或使用另一台设备查看。</div>
+<form id="config" autocomplete="off">
+<section class="card"><h2>01 · 连接 Wi-Fi</h2>
+<div class="row"><button type="button" id="scan">刷新 Wi-Fi 列表</button></div>
+<label for="networks">附近的 2.4 GHz 网络</label>
+<select id="networks" required aria-describedby="scanStatus"><option value="">请选择检测到的 Wi-Fi</option></select>
+<p id="scanStatus" class="small" role="status" aria-live="polite">设备就绪后将自动扫描附近网络。</p>
+<label class="check"><input type="checkbox" id="hiddenNetwork" aria-controls="manualNetwork">连接隐藏网络（手动输入名称）</label>
+<div id="manualNetwork" hidden>
+<label for="ssid">隐藏网络的 Wi-Fi 名称</label><input id="ssid" name="ssid" readonly hidden maxlength="32" placeholder="输入隐藏网络的完整名称" autocapitalize="none" spellcheck="false">
+<p class="small">名称最多 32 字节；页面 maxlength 限制不是字节校验，最终以设备校验为准。</p>
+</div>
+<label for="pass">Wi-Fi 密码</label><div class="row"><input type="password" id="pass" name="pass" maxlength="64" placeholder="输入路由器密码" autocomplete="new-password"><button type="button" data-toggle="pass" aria-label="显示 Wi-Fi 密码">显示</button></div>
+<p id="saved" class="small">同一网络密码留空可保持原密码；新网络需填密码。</p>
+<label class="check"><input type="checkbox" id="open">这是无密码网络（开放 Wi-Fi）；普通模式由扫描结果确定</label>
+<p class="small">不支持需网页登录的酒店/校园网络或企业 802.1X 认证。请使用可直接联网的家庭路由器或手机热点。</p>
+</section>
+<section class="card"><h2>02 · 授权 Qoder Cloud Agents</h2>
+<p><a href="https://docs.qoder.com/zh/cloud-agents/api/conventions/authentication" target="_blank" rel="noopener noreferrer">如何获取 PAT →</a></p>
+<p class="small">登录 qoder.com → 设置 → 个人访问令牌 → 创建令牌。选择所需权限与有效期；令牌完整内容只显示一次。</p>
+<label for="pat">PAT Key</label><div class="row"><input type="password" id="pat" name="pat" maxlength="255" placeholder="pt-…" autocapitalize="none" spellcheck="false" autocomplete="new-password"><button type="button" data-toggle="pat" aria-label="显示 PAT">显示</button></div>
+<p class="small" id="patHint">首次配置必须填写 PAT。设备会验证其访问权限，不会把令牌回显到网页。</p>
+</section>
+<button type="submit" class="primary" id="save">验证并保存配置</button>
+</form>
+<div id="status" class="status" role="status" aria-live="polite">正在连接设备配置服务…</div>
+<footer>请保持连接设备热点，直到提示配置成功。<br>热点连接使用 WPA2；设备 NVS 目前未启用存储加密。
+<p>恢复出厂设置：在设备的模板选择页或热点配置页长按 OK → 设备设置 → 恢复出厂设置。会删除 Wi-Fi、PAT 和音量设置，不删除云端会话；需要设备上二次确认。</p></footer>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let token='',init=false,busy=false,done=false,scanning=false,saving=false,autoScanned=false;
+let savedSsid='',savedSelectionPending=true,selectedKey='',pollTimer,lastStage=null;
+function message(text,tone=''){ $('status').textContent=text; $('status').dataset.tone=tone; }
+function controls(){
+    const manual=$('hiddenNetwork').checked,locked=!init||busy||done||scanning||saving;
+    document.querySelectorAll('#config input,#config button,#config select').forEach(e=>e.disabled=locked);
+    $('manualNetwork').hidden=!manual;
+    $('ssid').hidden=!manual; $('ssid').readOnly=!manual; $('ssid').required=manual;
+    $('networks').required=!manual; $('networks').disabled=locked||manual;
+    $('open').disabled=locked||!manual;
+    $('pass').disabled=locked||$('open').checked||(!manual&&!$('networks').value);
+}
+function lock(value){busy=value;controls();}
+function selectedNetwork(){return $('networks').selectedOptions[0];}
+function syncNetwork(){
+    const o=selectedNetwork(),key=o?o.value:'';
+    if(key!==selectedKey)$('pass').value='';
+    selectedKey=key; $('ssid').value=key?o.dataset.ssid:'';
+    $('open').checked=!!key&&o.dataset.open==='true';
+    if($('open').checked)$('pass').value='';
+    controls();
+}
+function clearNetworks(sync=true){
+    $('networks').replaceChildren(new Option('请选择检测到的 Wi-Fi',''));
+    $('networks').value='';
+    if(sync&&!$('hiddenNetwork').checked)syncNetwork();
+}
+async function json(url,options={}){const r=await fetch(url,{cache:'no-store',...options});const body=await r.json();if(!r.ok)throw new Error(body.message||'设备暂时无法处理请求');return body;}
+async function scanNetworks(){
+    if(!init||busy||done||scanning||saving)return;
+    const previous=$('networks').value;
+    scanning=true; controls(); $('scanStatus').textContent='正在扫描附近的 2.4 GHz Wi-Fi…';
+    try{
+        const aps=await json('/scan');
+        if(!Array.isArray(aps))throw new Error('扫描结果无效');
+        const unique=new Map();
+        for(const a of aps.filter(a=>a&&typeof a.ssid==='string'&&a.ssid).sort((a,b)=>b.rssi-a.rssi)){
+            const key=JSON.stringify([a.ssid,a.auth]);
+            if(!unique.has(key))unique.set(key,a);
+        }
+        clearNetworks(false);
+        for(const [key,a] of unique){
+            const o=new Option(a.ssid+' · '+a.rssi+' dBm'+(a.auth===0?' · 无密码':' · 加密 ('+a.auth+')'),key);
+            o.dataset.ssid=a.ssid; o.dataset.open=String(a.auth===0); $('networks').add(o);
+        }
+        const retained=unique.has(previous)?previous:'';
+        const saved=savedSelectionPending?[...unique].find(([,a])=>a.ssid===savedSsid):null;
+        $('networks').value=retained||(!previous&&saved?saved[0]:'');
+        savedSelectionPending=false;
+        if(!$('hiddenNetwork').checked)syncNetwork();
+        $('scanStatus').textContent=unique.size
+            ?(previous&&!retained?'原选网络已不在列表中，请重新选择。':'扫描完成，请选择检测到的 Wi-Fi。')+'可点击“刷新 Wi-Fi 列表”；隐藏网络请勾选“连接隐藏网络（手动输入名称）”。'
+            :'未检测到可用的 2.4 GHz Wi-Fi。请点击“刷新 Wi-Fi 列表”重试；隐藏网络请勾选“连接隐藏网络（手动输入名称）”。';
+    }catch(e){
+        clearNetworks();
+        $('scanStatus').textContent='扫描失败：'+e.message+'。请点击“刷新 Wi-Fi 列表”重试；隐藏网络请勾选“连接隐藏网络（手动输入名称）”。';
+    }finally{scanning=false;controls();}
+}
+async function poll(){try{const s=await json('/status');token=s.token;done=s.done;
+if(!init){savedSsid=s.ssid||'';$('pat').required=!s.pat_set;if(s.pat_set){$('patHint').textContent='PAT 已配置。留空保持原令牌，填写新值则替换。';$('pat').placeholder='已配置 · 留空保持不变';}init=true;}
+lock(s.busy||done);if(s.busy||done||s.stage!==lastStage)message(s.message,done?'ok':s.stage>=4&&s.stage<=7?'error':'');lastStage=s.stage;
+if(done){$('pass').value='';$('pat').value='';message('配置成功！设备即将重启，请切回正常网络。','ok');return;}
+if(!autoScanned&&!busy&&token){autoScanned=true;void scanNetworks();}
+}catch(e){lastStage=null;if(!busy&&!scanning&&!saving&&!done)message('暂未连接设备。请确认仍连接热点，并打开 http://192.168.4.1/。','error');}
+pollTimer=setTimeout(poll,1500);}
+$('scan').addEventListener('click',scanNetworks);
+$('networks').addEventListener('change',()=>{savedSelectionPending=false;syncNetwork();});
+$('hiddenNetwork').addEventListener('change',()=>{
+    savedSelectionPending=false; $('networks').value=''; selectedKey='';
+    $('ssid').value=''; $('pass').value=''; $('open').checked=false; controls();
+});
+$('ssid').addEventListener('input',()=>{$('pass').value='';});
+$('open').addEventListener('change',()=>{if($('open').checked)$('pass').value='';controls();});
+document.querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{const e=$(b.dataset.toggle);const show=e.type==='password';e.type=show?'text':'password';b.textContent=show?'隐藏':'显示';}));
+$('config').addEventListener('submit',async e=>{
+    e.preventDefault(); if(busy||done||scanning||saving)return;
+    if(!token){message('设备尚未就绪，请稍候或刷新页面。','error');return;}
+    if(!$('hiddenNetwork').checked){
+        if(!$('networks').value){message('请选择检测到的 Wi-Fi，或勾选“连接隐藏网络（手动输入名称）”。','error');return;}
+        syncNetwork();
+    }else if(!$('ssid').value){message('请输入隐藏网络的 Wi-Fi 名称。','error');return;}
+    // maxlength limits characters, not UTF-8 bytes; the device remains authoritative.
+    const body=new URLSearchParams({ssid:$('ssid').value,pass:$('open').checked?'':$('pass').value,pat:$('pat').value.trim(),open:$('open').checked?'1':'0'});
+    saving=true; controls();
+    try{
+        const s=await json('/save',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','X-Portal-Token':token},body:body.toString()});
+        $('pass').value=''; $('pat').value=''; lock(true); if(!done)message(s.message);
+    }catch(err){if(!done)message(err.message,'error');}
+    finally{saving=false;controls();}
+});
+controls();poll();
+</script></body></html>
